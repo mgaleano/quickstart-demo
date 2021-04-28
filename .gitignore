@@ -1,0 +1,19 @@
+# Mac
+.DS_Store
+
+# Maven
+target
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*/*.iml
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# Other files
+aut-local.properties

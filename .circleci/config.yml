@@ -1,0 +1,51 @@
+version: 2.1
+
+commands:
+  restore_and_save_cache:
+    steps:
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: mvn de.qaware.maven:go-offline-maven-plugin:resolve-dependencies
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+  store_test_results_and_artifacts:
+    steps:
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/quick-automation/test-results/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*TEST-TestSuite.xml" -exec cp {} ~/quickstart-test-automation/test-results/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/quickstart-test-automation/test-results
+      - store_artifacts:
+          path: ~/quickstart-test-automation/test-results/junit
+
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:9-jdk
+    working_directory: ~/quickstart-test-automation
+
+    steps:
+      - checkout
+      - restore_and_save_cache
+      - run: mvn verify -s settings.xml -DskipTests
+      - slack/status:
+          fail_only: 'true'
+
+orbs:
+  slack: circleci/slack@1.0.0
+
+workflows:
+  version: 2.1
+  build-project:
+    jobs:
+      - build:
+          context: qa-automation

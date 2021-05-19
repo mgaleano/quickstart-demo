@@ -25,7 +25,7 @@ public class LoginTest {
     driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
   }
 
-  @Test
+  @Test(enabled = false)
   public void verifyLoginV1() {
     // driver.get("https://web.superpal.com/");
     driver.get(AutConfiguration.getBaseUrl());

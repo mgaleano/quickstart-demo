@@ -1,10 +1,14 @@
 package shop.corner.pages;
 
+import com.automato.configuration.AutRunConfig;
+import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import java.time.Duration;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static java.time.Duration.ofSeconds;
 
 
 public class BasePage {
@@ -23,7 +27,11 @@ public class BasePage {
    */
   public BasePage(WebDriver driver) {
     this.driver = driver;
-    PageFactory.initElements(driver, this);
+    if (AutRunConfig.isMobile()) {
+      PageFactory.initElements(new AppiumFieldDecorator(driver, ofSeconds(5)), this);
+    } else {
+      PageFactory.initElements(driver, this);
+    }
     wait = new WebDriverWait(driver, 8);
     waitLong = new WebDriverWait(driver, 15);
     fluentWait =

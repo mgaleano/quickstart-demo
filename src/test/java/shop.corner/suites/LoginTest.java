@@ -1,7 +1,10 @@
 package shop.corner.suites;
 
 import com.automato.configuration.AutConfiguration;
+import com.automato.configuration.AutRunConfig;
 import com.automato.driver.WebDriverHelper;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -20,7 +23,8 @@ public class LoginTest {
 
   @BeforeMethod
   public void setupDriver() {
-    driver = WebDriverHelper.getWebDriver();
+    Map<String, String> bsCaps = new HashMap<>();
+    driver = WebDriverHelper.getWebDriver(bsCaps);
     // Step 2
     driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
   }
@@ -50,7 +54,9 @@ public class LoginTest {
   // Step 5
   @Test
   public void verifyLoginV2() {
-    driver.get("https://web.superpal.com/");
+    if (!AutRunConfig.isMobile()) {
+      driver.get("https://web.superpal.com/");
+    }
 
     LandingPage landingPage = new LandingPage(driver);
     LoginPage loginPage = landingPage.clickOnLogin();
